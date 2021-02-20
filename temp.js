@@ -3,7 +3,7 @@ import Block from './Block.js';
 
 let smashingCoin = new Chain();
 smashingCoin.init();
-console.log("smashingCoin mining in progress....");
+// console.log("smashingCoin mining in progress....");
 // console.log(JSON.stringify(
 //     new Block(1, "01/06/2020", {
 //     sender: "Iris Ljesnjanin",
