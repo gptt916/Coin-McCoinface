@@ -19,8 +19,7 @@ class Chain {
       let genesisBlock
       if (file) {
         console.info('local ledger exists, using local file...')
-        genesisBlock = JSON.parse(file);
-        this.blockchain = genesisBlock;
+        this.blockchain = JSON.parse(file)
       } else {
         console.info('local ledger not found, creating new ledger')
         const genesisBlock = new Block(
@@ -31,7 +30,7 @@ class Chain {
         );
         fs.writeFile(
           path.join('.', 'ledger.json'),
-          JSON.stringify([genesisBlock], null, 4),
+          JSON.stringify(genesisBlock, null, 4),
           (err) => {
             if (err) {
               console.err('Error writing: ', err);
@@ -39,7 +38,7 @@ class Chain {
             }
           }
         );
-        this.blockchain = genesisBlock;
+        this.blockchain = [genesisBlock];
       }
     });
   }
@@ -48,11 +47,25 @@ class Chain {
     return this.blockchain[this.blockchain.length - 1];
   }
 
-  addNewBlock(newBlock) {
+  addNewBlock(newBlock, cb) {
     newBlock.precedingHash = this.obtainLatestBlock().hash;
+    newBlock.setIndex(this.obtainLatestBlock().index + 1);
     newBlock.hash = newBlock.computeHash();
+    console.log('proofing')
     newBlock.proofOfWork(this.difficulty);
     this.blockchain.push(newBlock);
+    fs.writeFile(
+      path.join('.', 'ledger.json'),
+      JSON.stringify(this.blockchain, null, 4),
+      (err) => {
+        if (err) {
+          console.err('Error writing: ', err);
+          cb(err)
+          return;
+        }
+        cb(null, this.blockchain);
+      }
+    );
   }
 
   checkChainValidity() {

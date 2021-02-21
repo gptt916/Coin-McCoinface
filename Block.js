@@ -1,9 +1,7 @@
 import sha256 from 'crypto-js/sha256.js';
-import fs from "fs";
-import path from "path";
 
 class Block {
-  constructor(index, timestamp, data, precedingHash = " ") {
+  constructor(index = null, timestamp, data, precedingHash = " ") {
     this.index = index;
     this.timestamp = timestamp;
     this.data = data;
@@ -12,7 +10,13 @@ class Block {
     this.nonce = 0;
   }
 
+  setIndex(index) {
+    this.index = index;
+  }
+
   computeHash() {
+    console.log('computing hash with nonce: ', this.nonce)
+    console.log('sha256 string: ', this.index + this.precedingHash + this.timestamp + JSON.stringify(this.data) + this.nonce)
     return sha256(
       this.index +
         this.precedingHash +
